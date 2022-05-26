@@ -103,7 +103,30 @@ async function run() {
         })
 
         app.post('/purchase', async(req, res) => {
-            const purchaseTool = req.body;
-            const result = await PurchaseCollection.insertOne(purchaseTool);
-            res.send(result)
+                const purchaseTool = req.body;
+                const result = await PurchaseCollection.insertOne(purchaseTool);
+                res.send(result)
+            })
+            // payment method api 
+        app.post('/create-payment', async(req, res) => {
+            const { newPrice } = req.body;
+            const amount = newPrice * 100;
+            const payment = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            })
+            res.send({ clientSecret: payment.client_secret })
+        })
+
+        app.post('/addReview', async(req, res) => {
+            const review = req.body;
+            const addReview = await reviewCollection.insertOne(review);
+            res.send(addReview)
+        })
+
+        app.post('/addProfile', verifyToken, async(req, res) => {
+            const profile = req.body;
+            const addProfile = await profileCollection.insertOne(profile);
+            res.send(addProfile)
         })
