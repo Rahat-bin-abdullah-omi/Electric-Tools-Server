@@ -175,13 +175,20 @@ async function run() {
         })
 
         app.put('/updatePaid/:id', async(req, res) => {
-            const id = req.params.id;
-            const filter = { _id: ObjectId(id) };
-            const updatePaid = {
-                $set: {
-                    shipped: 'shipped'
+                const id = req.params.id;
+                const filter = { _id: ObjectId(id) };
+                const updatePaid = {
+                    $set: {
+                        shipped: 'shipped'
+                    }
                 }
-            }
-            const result = await PurchaseCollection.updateOne(filter, updatePaid);
-            res.send(result)
+                const result = await PurchaseCollection.updateOne(filter, updatePaid);
+                res.send(result)
+            })
+            // delete tool product 
+        app.delete('/deleteProduct/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const deleteProduct = await toolsCollection.deleteOne(query);
+            res.send(deleteProduct)
         })
