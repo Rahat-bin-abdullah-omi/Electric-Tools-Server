@@ -187,8 +187,35 @@ async function run() {
             })
             // delete tool product 
         app.delete('/deleteProduct/:id', async(req, res) => {
+                const id = req.params.id;
+                const query = { _id: ObjectId(id) };
+                const deleteProduct = await toolsCollection.deleteOne(query);
+                res.send(deleteProduct)
+            })
+            // delete purchase tool
+        app.delete('/deletePurchaseTool/:id', async(req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const deleteProduct = await toolsCollection.deleteOne(query);
-            res.send(deleteProduct)
+            const deleteTool = await PurchaseCollection.deleteOne(query);
+            res.send(deleteTool)
         })
+
+
+    } finally {
+        // client.close();
+    }
+
+}
+run().catch(console.dir())
+
+
+
+
+
+app.get('/', (req, res) => {
+    res.send('Hello World! from tools')
+})
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})
