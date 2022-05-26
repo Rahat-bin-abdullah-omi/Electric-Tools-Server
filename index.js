@@ -26,3 +26,16 @@ const verifyToken = (req, res, next) => {
         next()
     });
 }
+
+// const { json } = require('express');
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.f9lm3.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+async function run() {
+    try {
+        await client.connect()
+        const toolsCollection = client.db("Products").collection("tools");
+        const PurchaseCollection = client.db("Products").collection("purchase");
+        const reviewCollection = client.db("Products").collection("reviews");
+        const profileCollection = client.db("Products").collection("addProfile");
+        const userCollection = client.db("Products").collection("AllUsers");
