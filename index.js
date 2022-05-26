@@ -126,7 +126,62 @@ async function run() {
         })
 
         app.post('/addProfile', verifyToken, async(req, res) => {
+                const profile = req.body;
+                const addProfile = await profileCollection.insertOne(profile);
+                res.send(addProfile)
+            })
+            // put method 
+
+        app.put('/profileUpdate/:id', verifyToken, async(req, res) => {
+            const id = req.params.id;
+            console.log(req.headers.authorization)
             const profile = req.body;
-            const addProfile = await profileCollection.insertOne(profile);
-            res.send(addProfile)
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    education: profile.education,
+                    location: profile.location,
+                    number: profile.number,
+                    linkDin: profile.linkDin,
+                },
+            };
+            const result = await profileCollection.updateOne(filter, updateDoc);
+            res.send(result)
+        })
+
+        app.put('/allUser/:email', async(req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            }
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET)
+            res.send({ result, token });
+        })
+
+        app.put('/makeAdmin/:id', verifyToken, async(req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+        })
+
+        app.put('/updatePaid/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updatePaid = {
+                $set: {
+                    shipped: 'shipped'
+                }
+            }
+            const result = await PurchaseCollection.updateOne(filter, updatePaid);
+            res.send(result)
         })
