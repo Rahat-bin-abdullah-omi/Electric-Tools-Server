@@ -90,6 +90,20 @@ async function run() {
         })
 
         app.get('/allOrders', async(req, res) => {
-            const allOrders = await PurchaseCollection.find().toArray();
-            res.send(allOrders)
+                const allOrders = await PurchaseCollection.find().toArray();
+                res.send(allOrders)
+            })
+            // all Post method //
+
+
+        app.post('/addProduct', verifyToken, async(req, res) => {
+            const productDetail = req.body;
+            const addProduct = await toolsCollection.insertOne(productDetail);
+            res.send(addProduct)
+        })
+
+        app.post('/purchase', async(req, res) => {
+            const purchaseTool = req.body;
+            const result = await PurchaseCollection.insertOne(purchaseTool);
+            res.send(result)
         })
